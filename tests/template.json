@@ -1,0 +1,38 @@
+{
+  "ROSTemplateFormatVersion" : "2015-09-01",
+  "Description": "One VPC instance",
+  "Parameters" : {
+    "CidrBlock": {
+      "Type": "String",
+      "AllowedValues": ["192.168.0.0/16", "172.16.0.0/12", "10.0.0.0/8"],
+      "Default": "192.168.0.0/16"
+    },
+    "VpcName": {
+      "Type": "String",
+      "Description": "The VPC name",
+      "MinLength": 2,
+      "MaxLength": 128,
+      "ConstraintDescription": "[2, 128] English or Chinese letters"
+    }
+  },
+  "Resources" : {
+    "Vpc": {
+      "Type": "ALIYUN::ECS::VPC",
+      "Properties": {
+        "CidrBlock": {"Ref": "CidrBlock"},
+        "VpcName": {"Ref": "VpcName"}
+      }
+    }
+  },
+  "Outputs": {
+    "VpcId": {
+      "Value" : {"Fn::GetAtt": ["Vpc", "VpcId"]}
+    },
+    "VRouterId": {
+      "Value" : {"Fn::GetAtt": ["Vpc", "VRouterId"]}
+    },
+    "RouteTableId": {
+      "Value" : {"Fn::GetAtt": ["Vpc", "RouteTableId"]}
+    }
+  }
+}

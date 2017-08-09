@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+# coding=utf-8
+
+import argparse
+
+import os
+import sys
+
+POSSIBLE_TOPDIR = os.path.normpath(os.path.join(os.path.abspath(sys.argv[0]), os.pardir, os.pardir))
+
+if os.path.exists(os.path.join(POSSIBLE_TOPDIR, 'ros', '__init__.py')):
+    sys.path.insert(0, POSSIBLE_TOPDIR)
+
+from ros.stacks import create_stack_command
+from ros.stacks import delete_stack_command
+from ros.stacks import update_stack_command
+from ros.stacks import preview_stack_command
+from ros.stacks import abandon_stack_command
+from ros.stacks import describe_stack_command
+from ros.stacks import list_stacks_command
+from ros.resources import list_resources_command
+from ros.resources import describe_resource_command
+from ros.resources import resource_type_command
+from ros.resources import resource_type_detail_command
+from ros.resources import resource_type_template_command
+from ros.templates import validate_template_command
+from ros.templates import get_template_command
+from ros.others import list_regions_command
+from ros.others import list_events_command
+from ros.others import userdata_command
+from ros.apps import config
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(prog='ros')
+    #parser.add_argument('integers', metavar='N', type=int, nargs='+', help='an iteger for the accumulator')
+    subparsers = parser.add_subparsers(title='commands', metavar='', help=None)
+    parser.add_argument('--config', metavar='CONFIG_FILE', help='Location of config file', default=None)
+    parser.add_argument('--json', action='store_true', help="Print results as JSON format", default=False)
+    parser.add_argument('--region-id', help="Region ID, if not set, use config file's field", default=None)
+
+    userdata_command.setup(subparsers)
+
+    create_stack_command.setup(subparsers)
+    delete_stack_command.setup(subparsers)
+    update_stack_command.setup(subparsers)
+    preview_stack_command.setup(subparsers)
+    abandon_stack_command.setup(subparsers)
+    list_stacks_command.setup(subparsers)
+    describe_stack_command.setup(subparsers)
+
+    list_resources_command.setup(subparsers)
+    describe_resource_command.setup(subparsers)
+    resource_type_command.setup(subparsers)
+    resource_type_detail_command.setup(subparsers)
+    resource_type_template_command.setup(subparsers)
+    
+    get_template_command.setup(subparsers)
+    validate_template_command.setup(subparsers)
+
+    list_regions_command.setup(subparsers)
+    list_events_command.setup(subparsers)
+
+    args = parser.parse_args()
+    config.set_client(args.config, args.region_id, POSSIBLE_TOPDIR)
+
+    if(args.json):
+        config.JSON_FORM = True
+
+    args.func(args)
