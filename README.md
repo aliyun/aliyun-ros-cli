@@ -30,7 +30,178 @@ You can also input the region when using ros cli. In many cases, the default con
 ```
 pip install aliyun-python-sdk-ros
 
-python setup.py install
+pip install aliyun-ros-cli
+```
+
+### Tab Completion
+
+Support tab completion in bash. Put the `ros_completion` file at `/etc/bash_completion.d/`
+and run `source /etc/bash_completion.d/ros_completion`
+
+`ros_completion` content:
+
+```bash
+    #! /usr/bin/bash
+    #
+    # put this file at `/etc/bash_completion.d/` and run `source /etc/bash_completion.d/ros_completion`
+    #
+    # Copyright (c) 2017 Aliyun.com All right reserved. This software is the
+    # confidential and proprietary information of Aliyun.com ("Confidential
+    # Information"). You shall not disclose such Confidential Information and shall
+    # use it only in accordance with the terms of the license agreement you entered
+    # into with Aliyun.com .
+    #
+    # created by quming on 07/24/2017
+
+    _ros()
+    {
+        # cur prev ros_father
+        local cur prev opts_top opts_cmds
+        COMPREPLY=()
+        cur="${COMP_WORDS[COMP_CWORD]}"
+        prev="${COMP_WORDS[COMP_CWORD-1]}"
+        opts_top="-h --help --json --config --region-id"
+        opts_cmds="abandon-stack \
+            create-stack \
+            delete-stack \
+            describe-stack describe-resource \
+            get-template \
+            list-stacks list-resources list-regions list-events \
+            preview-stack \
+            resource-type resource-type-detail resource-type-template \
+            set-userdata \
+            update-stack \
+            validate-template"
+
+        local opt_abandon_stack="-h --help --region-id --stack-name --stack-id"
+
+        local opt_create_stack="-h --help --region-id --stack-name \
+            --template-url --parameters --disable-rollback \
+            --timeout-in-minutes"
+
+        local opt_delete_stack="-h --help --region-id --stack-name --stack-id"
+        local opt_describe_stack="-h --help --stack-name --stack-id"
+        local opt_describe_resource="-h --help --stack-name --stack-id --resource-name"
+
+        local opt_get_template="-h --help --stack-name --stack-id"
+
+        local opt_list_stacks="-h --help --stack-name --stack-id --region-id \
+            --status --page-number --page-size"
+        local opt_list_resources="-h --help --stack-name --stack-id"
+        local opt_list_regions="-h --help"
+        local opt_list_events="-h --help --stack-name --stack-id --resource-status \
+            --resource-name --resource-type --page-number --page-size"
+
+        local opt_preview_stack="-h --help --region-id --stack-name --stack-id \
+            --template-url --parameters --disable-rollback \
+            --timeout-in-minutes"
+
+        local opt_resource_type="-h --help --status"
+        local opt_resource_type_detail="-h --help --name"
+        local opt_resource_type_template="-h --help --name"
+
+        local opt_set_userdata="-h --help --key-id --key-secret --json --region-id"
+
+        local opt_update_stack="-h --help --region-id --stack-name --stack-id \
+            --template-url --parameters --disable-rollback \
+            --timeout-in-minutes"
+
+        local opt_validate_template="-h --help --template-url"
+
+
+        # if [ -z "${cur}" ]; then
+        if [ "${prev}"x = "ros"x ]; then
+            ros_father=""
+        fi
+
+        if [[ ${opts_cmds} = *${prev}* ]]; then
+            ros_father=${prev}
+        fi
+
+        # echo "["${cur}"]["${prev}"]["${ros_father}"]"
+
+        case "${ros_father}" in
+            abandon-stack)
+                COMPREPLY=($(compgen -W "${opt_abandon_stack}" -- ${cur}))
+                return 0
+                ;;
+            create-stack)
+                COMPREPLY=($(compgen -W "${opt_create_stack}" -- ${cur}))
+                return 0
+                ;;
+            delete-stack)
+                COMPREPLY=($(compgen -W "${opt_delete_stack}" -- ${cur}))
+                return 0
+                ;;
+            describe-stack)
+                COMPREPLY=($(compgen -W "${opt_describe_stack}" -- ${cur}))
+                return 0
+                ;;
+            describe-resource)
+                COMPREPLY=($(compgen -W "${opt_describe_resource}" -- ${cur}))
+                return 0
+                ;;
+            get-template)
+                COMPREPLY=($(compgen -W "${opt_get_template}" -- ${cur}))
+                return 0
+                ;;
+            list-stacks)
+                COMPREPLY=($(compgen -W "${opt_list_stacks}" -- ${cur}))
+                return 0
+                ;;
+            list-resources)
+                COMPREPLY=($(compgen -W "${opt_list_resources}" -- ${cur}))
+                return 0
+                ;;
+            list-regions)
+                COMPREPLY=($(compgen -W "${opt_list_regions}" -- ${cur}))
+                return 0
+                ;;
+            list-events)
+                COMPREPLY=($(compgen -W "${opt_list_events}" -- ${cur}))
+                return 0
+                ;;
+            preview-stack)
+                COMPREPLY=($(compgen -W "${opt_preview_stack}" -- ${cur}))
+                return 0
+                ;;
+            resource-type)
+                COMPREPLY=($(compgen -W "${opt_resource_type}" -- ${cur}))
+                return 0
+                ;;
+            resource-type-detail)
+                COMPREPLY=($(compgen -W "${opt_resource_type_detail}" -- ${cur}))
+                return 0
+                ;;
+            resource-type-template)
+                COMPREPLY=($(compgen -W "${opt_resource_type_template}" -- ${cur}))
+                return 0
+                ;;
+            set-userdata)
+                COMPREPLY=($(compgen -W "${opt_set_userdata}" -- ${cur}))
+                return 0
+                ;;
+            update-stack)
+                COMPREPLY=($(compgen -W "${opt_update_stack}" -- ${cur}))
+                return 0
+                ;;
+            validate-template)
+                COMPREPLY=($(compgen -W "${opt_validate_template}" -- ${cur}))
+                return 0
+                ;;
+            *)
+                if [[ ${cur} == -* ]] ; then
+                    COMPREPLY=($(compgen -W "${opts_top}" -- ${cur}))
+                    return 0
+                else
+                    COMPREPLY=($(compgen -W "${opts_cmds}" -- ${cur}))
+                    return 0
+                fi
+            ;;
+        esac
+    }
+
+    complete -F _ros ros
 ```
 
 ## Help

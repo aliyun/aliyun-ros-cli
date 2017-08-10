@@ -25,7 +25,7 @@ REGION_ID = None
 client = None
 JSON_FORM = False
 JSON_INDENT = 2
-ROS_DEBUG = True
+ROS_DEBUG = False
 
 
 def current_conf():
@@ -71,17 +71,26 @@ def set_client(cfg_file, region_id, top_dir=None):
     if os.path.isfile(cfg_file):
         pass
     else:
+        if os.path.isdir(top_dir + '/ros'):
+            pass
+        else:
+            os.mkdir(top_dir + '/ros')
+            
+        print('Please set Aliyun access info first.')
+        access_key_id = raw_input('Enter your access key id:')
+        access_key_secret = raw_input('Enter your access key secret:')
+        default_region_id = raw_input('Enter default region id:')
+
+        cf.add_section('ACCESS')
+        cf.set('ACCESS', 'ACCESS_KEY_ID', access_key_id)
+        cf.set('ACCESS', 'ACCESS_KEY_SECRET', access_key_secret)
+        cf.set('ACCESS', 'REGION_ID', default_region_id)
+
+        cf.add_section('JSON')
+        cf.set('JSON', 'JSON_INDENT', 2)
+
         with open(cfg_file, 'w') as configfile:
-            cf.add_section('ACCESS')
-            cf.set('ACCESS', 'ACCESS_KEY_ID', 'YOUR_KEY_ID')
-            cf.set('ACCESS', 'ACCESS_KEY_SECRET', 'YOUR_KEY_SECRET')
-            cf.set('ACCESS', 'REGION_ID', 'YOUR_REGION')
-
-            cf.add_section('JSON')
-            cf.set('JSON', 'JSON_INDENT', 2)
-
             cf.write(configfile)
-        print('Init blank configure file.')
 
     try:
         cf.read(cfg_file)
