@@ -11,7 +11,7 @@
 import sys
 import os
 import ros.apps.NewConfigParser as NewConfigParser
-import ros.apps.config
+import ros.apps.config as connect
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -25,6 +25,7 @@ def setup(subparsers):
     parser.add_argument('--key-secret', help='The default Aliyun access key region', required=True)
     parser.add_argument('--region-id', help='The default region', required=True)
     parser.add_argument('--json-ident', help='The default json indent when output in json format', default=2)
+    parser.add_argument('--debug', help='Whether to read debug infos', choices=['False', 'True'], default='False')
 
     parser.set_defaults(func=set_userdata)
 
@@ -33,14 +34,20 @@ def set_userdata(args):
 
     default_file = os.path.normpath(POSSIBLE_TOPDIR + '/ros/ros.conf')
 
+    if connect.check_access_info(args.key_id) is False or \
+        connect.check_access_info(args.key_secret) is False:
+        print('Please check your accrss key id and secret, should only have characters and numbers.')
+        sys.exit(1)
+
     cf = NewConfigParser.NewConfigParser()
     cf.add_section('ACCESS')
     cf.set('ACCESS', 'ACCESS_KEY_ID', args.key_id)
     cf.set('ACCESS', 'ACCESS_KEY_SECRET', args.key_secret)
     cf.set('ACCESS', 'REGION_ID', args.region_id)
 
-    cf.add_section('JSON')
-    cf.set('JSON', 'JSON_INDENT', args.json_ident)
+    cf.add_section('OTHER')
+    cf.set('OTHER', 'JSON_INDENT', args.json_ident)
+    cf.set('OTHER', 'DEBUG', args.debug)
 
     try:
         with open(default_file, 'wb') as configfile:

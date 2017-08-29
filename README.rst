@@ -23,13 +23,16 @@ default configuration where ros installed.
     ACCESS_KEY_SECRET = YOUR_KEY_SECRET
     REGION_ID = YOUR_REGION
 
-    [JSON]
+    [OTHER]
     JSON_INDENT = 2
+    DEBUG = False
 
 Please use ``ros set-userdata`` to set your default configuration.
 
 You can also input the region when using ros cli. In many cases, the
 default configuration will be used if you don't specify the region.
+
+Set DEBUG True to read more output.
 
 Install
 ~~~~~~~
@@ -579,7 +582,8 @@ Set userdata
 
     $ ros set-userdata -h
     usage: ros set-userdata [-h] --key-id KEY_ID --key-secret KEY_SECRET
-                            --region-id REGION_ID [--json-ident JSON_IDENT]
+                        --region-id REGION_ID [--json-ident JSON_IDENT]
+                        [--debug {False,True}]
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -590,3 +594,4 @@ Set userdata
                             The default region
       --json-ident JSON_IDENT
                             The default json indent when output in json format
+      --debug {False,True}  Whether to read debug infos

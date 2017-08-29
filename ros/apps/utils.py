@@ -77,6 +77,11 @@ def send_req(req):
     :param req: request
     :return: None
     """
+    req.set_accept_format("JSON")
+
+    if connect.ROS_DEBUG:
+        print('[DEBUG] Send request:\n %s\n' % req)
+
     try:
         status, headers, body = get_raw_resp(req)
     except Exception, e:
@@ -95,7 +100,13 @@ def deal_resp(status, headers, body, print_response):
     :param print_response: print function
     :return: None
     """
-    try:
+
+    if connect.ROS_DEBUG:
+        print('[DEBUG] Response status:\n %s\n' % status)
+        print('[DEBUG] Response headers:\n %s\n' % headers)
+        print('[DEBUG] Response body:\n %s\n' % body)
+
+    try:        
         data = json.loads(body)
         if 200 <= status < 300:
             print("[Succeed]")

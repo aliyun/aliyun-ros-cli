@@ -12,8 +12,9 @@ ACCESS_KEY_ID = YOUR_KEY_ID
 ACCESS_KEY_SECRET = YOUR_KEY_SECRET
 REGION_ID = YOUR_REGION
 
-[JSON]
+[OTHER]
 JSON_INDENT = 2
+DEBUG = False
 ```
 
 ## 自动补全支持
@@ -1016,3 +1017,5 @@ StatusReason        :  state changed
 | `--key-secret [KEY_SECRET]`   | 默认的 ALIYUN Access Key Secret |      |
 | `--region-id [REGION_ID]`     | 默认的 region-id                |      |
 | `--json-indent [JSON_INDENT]` | JSON输出时的缩进                   |      |
+| `--debug {'False', 'True'}`   | 是否开启Debug输出                  |      |
+   

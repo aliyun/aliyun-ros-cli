@@ -15,6 +15,7 @@ from aliyunsdkcore.acs_exception.exceptions import ServerException
 import NewConfigParser
 import os
 import sys
+import re
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -38,7 +39,7 @@ def current_conf():
     global REGION_ID
 
     print(
-        "Current Config:\nACCESS_KEY_ID: %s\nACCESS_KEY_SECRET: %s\nREGION_ID: %s\n" %
+        "[DEBUG] Current Config:\nACCESS_KEY_ID: %s\nACCESS_KEY_SECRET: %s\nREGION_ID: %s\n" %
         (ACCESS_KEY_ID, ACCESS_KEY_SECRET, REGION_ID))
 
 
@@ -77,17 +78,25 @@ def set_client(cfg_file, region_id, top_dir=None):
             os.mkdir(top_dir + '/ros')
             
         print('Please set Aliyun access info first.')
+
         access_key_id = raw_input('Enter your access key id:')
-        access_key_secret = raw_input('Enter your access key secret:')
-        default_region_id = raw_input('Enter default region id:')
+        while check_access_info(access_key_id) is False:
+            access_key_id = raw_input('Enter your access key id, only characters and numbers:')
+        
+        access_key_secret = raw_input('Enter your access key secret, without quote:')
+        while check_access_info(access_key_secret) is False:
+            access_key_secret = raw_input('Enter your access key secret, only characters and numbers:')
+
+        default_region_id = raw_input('Enter default region id, without quote:')
 
         cf.add_section('ACCESS')
         cf.set('ACCESS', 'ACCESS_KEY_ID', access_key_id)
         cf.set('ACCESS', 'ACCESS_KEY_SECRET', access_key_secret)
         cf.set('ACCESS', 'REGION_ID', default_region_id)
 
-        cf.add_section('JSON')
-        cf.set('JSON', 'JSON_INDENT', 2)
+        cf.add_section('OTHER')
+        cf.set('OTHER', 'JSON_INDENT', 2)
+        cf.set('OTHER', 'DEBUG', False)
 
         with open(cfg_file, 'w') as configfile:
             cf.write(configfile)
@@ -102,8 +111,9 @@ def set_client(cfg_file, region_id, top_dir=None):
         ACCESS_KEY_SECRET = YOUR_KEY_SECRET
         REGION_ID = cn-beijing
 
-        [JSON]
+        [OTHER]
         JSON_INDENT = 2
+        DEBUG = False
         """ % cfg_file)
         sys.exit(1)
 
@@ -114,7 +124,8 @@ def set_client(cfg_file, region_id, top_dir=None):
     else:
         REGION_ID = region_id
 
-    JSON_INDENT = int(cf.get("JSON", "JSON_INDENT"))
+    JSON_INDENT = int(cf.get("OTHER", "JSON_INDENT"))
+    ROS_DEBUG = bool(cf.get("OTHER", "DEBUG") == 'True')
 
     client = AcsClient(
         ACCESS_KEY_ID,
@@ -124,3 +135,15 @@ def set_client(cfg_file, region_id, top_dir=None):
 
     if ROS_DEBUG:
         current_conf()
+
+
+def check_access_info(info):
+    """
+    Check if access info only has characters and numbers
+    """
+    match = re.search('^[A-Za-z0-9]+$', info)
+
+    if match:
+        return True
+    else:
+        return False
