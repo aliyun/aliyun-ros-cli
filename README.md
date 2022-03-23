@@ -1,5 +1,8 @@
 # Aliyun ROS Command-Line Tools
 
+## !!!Obsolete
+please use [ALIYUN CLI](https://help.aliyun.com/product/29991.html) or [ROS CDK](https://help.aliyun.com/document_detail/204690.html) instead.
+
 ## Prepare
 
 ### Requires
